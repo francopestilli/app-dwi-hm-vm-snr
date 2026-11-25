@@ -1,5 +1,44 @@
 # DWI SNR: Horizontal vs Vertical Meridian
 
+<!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
+
+> **Computes DWI b0 signal-to-noise ratio in horizontal- and vertical-meridian visual cortex ROIs built from Benson14 retinotopy maps, using scilpy compute_snr.**
+
+Builds HM (polar angle 75-105 deg), UVM (0-15 deg) and LVM (165-180 deg) ROIs from the prf polar angle, eccentricity and visual area maps (resampled to the DWI grid), estimates a background noise mask with median_otsu and computes the mean b0 SNR in each ROI. Use it as a confound check that HM and VM regions do not differ in DWI SNR before comparing their streamline counts. The prf maps must be in the same physical space as the DWI.
+
+| | |
+|---|---|
+| 📥 **Inputs** | `neuro/dwi` · `neuro/prf` |
+| 📤 **Outputs** | `neuro/SNR_and_dMRI_stats` |
+| 🐳 **Container** | `gamorosino/tract_align:v1.1` |
+| ⚙️ **Resources** | 4 GB memory · 1 h walltime |
+| 🔗 **Run it** | [doi.org/10.25663/brainlife.app.956](https://doi.org/10.25663/brainlife.app.956) |
+
+#### 📥 Inputs
+
+| Input | Datatype | Required | Description |
+|---|---|---|---|
+| `dwi` | `neuro/dwi` | yes | DWI image with bvals and bvecs. |
+| `prf` | `neuro/prf` | yes | Retinotopy maps (polarAngle, eccentricity, varea), for example from Benson14, aligned to the DWI. |
+
+#### 📤 Outputs
+
+| Output | Datatype | Description |
+|---|---|---|
+| `stats` | `neuro/SNR_and_dMRI_stats` | Per-subject mean DWI SNR (b0) in HM/UVM/LVM cortical ROIs, one row per meridian, with voxel counts. |
+
+<details>
+<summary><b>⚙️ Parameters</b> (2)</summary>
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `varea_labels` | string |  | Comma-separated varea label(s) to restrict the ROI to (e.g. '1' for V1 only). Empty = all Benson14 visual areas (varea>0). |
+| `b0_thr` | number | `50` | b-value threshold below which a volume is treated as a b0. |
+
+</details>
+
+<!-- brainlife-app:end -->
+
 Checks whether DWI signal-to-noise ratio differs between the Horizontal
 Meridian (HM) and Vertical Meridian (UVM+LVM) cortical ROIs used in the
 VISCONN retinotopy/connectivity analysis. This is a confound check for the
